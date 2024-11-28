@@ -1,0 +1,131 @@
+org: bprbackend
+app: bpr-lambda
+service: bpr-lambda
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      seed: true
+      migrate: true
+      region: 'us-east-1'
+      inMemory: true # Optional: keeps data only in memory during runtime
+    seed:
+      dev:
+        sources:
+          - table: UsersTable
+            sources: [db-migration/users.json]
+    options:
+      endpoint: http://localhost:8000
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  environment:
+      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
+      DYNAMODB_ENDPOINT: http://localhost:8000
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:Get*"
+        - "dynamodb:Scan*"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+      Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/*
+functions:
+  createCustomer:
+    handler: createCustomer.createCustomer
+    events:
+      - httpApi:
+          path: /customer
+          method: post
+  getCustomers:
+    handler: src/services/userService.getUsers
+    events: 
+      - httpApi:
+          path: /users
+          method: get
+resources:
+  Resources:
+     UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersTable
+        AttributeDefinitions:
+          - AttributeName: UserID
+            AttributeType: S
+          - AttributeName: FirstName
+            AttributeType: S
+          - AttributeName: LastName
+            AttributeType: S
+          - AttributeName: PhoneNumber
+            AttributeType: S 
+        KeySchema:
+          - AttributeName: UserID
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: FirstNameIndex
+            KeySchema:
+              - AttributeName: FirstName
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+          - IndexName: LastNameIndex
+            KeySchema:
+              - AttributeName: LastName
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+          - IndexName: PhoneNumberIndex
+            KeySchema:
+              - AttributeName: PhoneNumber
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+        ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+    #  VehiclesTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: Vehicles
+    #     AttributeDefinitions:
+    #       - AttributeName: VehicleNumber
+    #         AttributeType: S
+    #       - AttributeName: UserID
+    #         AttributeType: S
+    #       - AttributeName: Model
+    #         AttributeType: S
+    #       - AttributeName: Make
+    #         AttributeType: S
+    #       - AttributeName: Year
+    #         AttributeType: N
+    #     KeySchema:
+    #       - AttributeName: VehicleNumber
+    #         KeyType: HASH
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: UserIDIndex
+    #         KeySchema:
+    #           - AttributeName: UserID
+    #             KeyType: HASH
+    #         Projection:
+    #           ProjectionType: ALL
+    #     BillingMode: PAYPERREQUEST  # Use on-demand billing

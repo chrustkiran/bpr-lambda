@@ -1,0 +1,22 @@
+[
+    {
+      "UserID": "1",
+      "PhoneNunmber": "076788292",
+      "FirstName": "Chris",
+      "LastName": "Morris",
+      "Vehicles": ["WER123", "FGT12"],
+      "Suburb": "NottingHill",
+      "PostalCode": 3168,
+      "AddressLine1": "111, 453, Ambal St"
+    },
+    {
+        "UserID": "12",
+        "PhoneNunmber": "07678829e2",
+        "FirstName": "Morris",
+        "LastName": "Martin",
+        "Vehicles": ["WER123", "FGT12"],
+        "Suburb": "NottingHill",
+        "PostalCode": 3168,
+        "AddressLine1": "111, 453, Ambal St"
+      }
+  ]
