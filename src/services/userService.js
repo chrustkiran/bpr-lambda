@@ -1,25 +1,17 @@
-'use strict'
-var AWS = require('aws-sdk');
-const dynamodb = require('../../db')
+const userRepo = require('../repositories/userRepositories')
+const Response = require('../dto/Response')
 
-module.exports.getUsers = async (event) => {
-  const scanParams = {
-    TableName: 'UsersTable'
-  }
-
-  const result = await dynamodb.scan(scanParams).promise()
-  if (result.Count === 0) {
-    return {
-      statusCode: 404
+const getAllUsers = async (event) => {
+  try {
+    const result = await userRepo.getAllUsers()
+    if (result.Count == 0) {
+      throw new NoResultsError("There is no record for this query :getAllUsers()", 400)
     }
+    return new Response(result.Items, result.Count)
+  } catch (error) {
+    console.error('There was an error while getting all user records', error)
+    throw error
   }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      total: result.Count,
-      items: await result.Items
-    })
-  }
-
 }
+
+module.exports = {getAllUsers}

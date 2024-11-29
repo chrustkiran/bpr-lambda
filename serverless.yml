@@ -8,6 +8,9 @@ plugins:
 
 
 custom:
+  accountId:
+    dev: '123456'
+    prod: '123' #'${aws:accountId}'
   dynamodb:
     stages:
       - dev
@@ -20,7 +23,7 @@ custom:
     seed:
       dev:
         sources:
-          - table: UsersTable
+          - table: UsersTable_${sls:stage}
             sources: [db-migration/users.json]
     options:
       endpoint: http://localhost:8000
@@ -30,6 +33,7 @@ provider:
   runtime: nodejs20.x
   stage: dev
   environment:
+      STAGE: ${sls:stage}
       DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
       DYNAMODB_ENDPOINT: http://localhost:8000
   iamRoleStatements:
@@ -40,16 +44,16 @@ provider:
         - "dynamodb:Scan*"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-      Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/*
+      Resource: arn:aws:dynamodb:${aws:region}:${self:custom.accountId.${sls:stage}}:table/*
 functions:
-  createCustomer:
-    handler: createCustomer.createCustomer
+  createUsers:
+    handler: src/controllers/userController.
     events:
       - httpApi:
           path: /customer
           method: post
-  getCustomers:
-    handler: src/services/userService.getUsers
+  getUsers:
+    handler: src/controllers/userController.getAllUsers
     events: 
       - httpApi:
           path: /users
@@ -59,7 +63,7 @@ resources:
      UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: UsersTable
+        TableName: UsersTable_${sls:stage}
         AttributeDefinitions:
           - AttributeName: UserID
             AttributeType: S
