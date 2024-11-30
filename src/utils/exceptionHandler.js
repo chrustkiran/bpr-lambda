@@ -1,11 +1,13 @@
-const NoResultsError = require('../exceptions/NoResultsError')
-
 const returnError = (error) => {
-    if (error instanceof NoResultsError) {
+    if (error) {
         return {
-            statusCode: error.statusCode,
+            statusCode: error.statusCode || 500,
             body: error.message
         }
+    }
+    return {
+        statusCode: 500,
+        body: error.message
     }
 }
 

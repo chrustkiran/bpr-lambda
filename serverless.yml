@@ -18,12 +18,11 @@ custom:
       port: 8000
       seed: true
       migrate: true
-      region: 'us-east-1'
-      inMemory: true # Optional: keeps data only in memory during runtime
+      inMemory: true
     seed:
       dev:
         sources:
-          - table: UsersTable_${sls:stage}
+          - table: CustomersTable_${sls:stage}
             sources: [db-migration/users.json]
     options:
       endpoint: http://localhost:8000
@@ -34,8 +33,6 @@ provider:
   stage: dev
   environment:
       STAGE: ${sls:stage}
-      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
-      DYNAMODB_ENDPOINT: http://localhost:8000
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -46,24 +43,24 @@ provider:
         - "dynamodb:DeleteItem"
       Resource: arn:aws:dynamodb:${aws:region}:${self:custom.accountId.${sls:stage}}:table/*
 functions:
-  createUsers:
-    handler: src/controllers/userController.
+  searchCustomer:
+    handler: src/controllers/customerController.searchCustomer
     events:
       - httpApi:
-          path: /customer
+          path: /customer/search
           method: post
-  getUsers:
-    handler: src/controllers/userController.getAllUsers
+  getAllCustomers:
+    handler: src/controllers/customerController.getAllCustomers
     events: 
       - httpApi:
-          path: /users
+          path: /customers
           method: get
 resources:
   Resources:
      UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: UsersTable_${sls:stage}
+        TableName: CustomersTable_${sls:stage}
         AttributeDefinitions:
           - AttributeName: UserID
             AttributeType: S

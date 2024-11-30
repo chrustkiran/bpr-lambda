@@ -1,9 +1,7 @@
-class NoResultsError extends Error {
-    constructor(message, errorCode) {
+module.exports = class NoResultsError extends Error {
+    constructor(message) {
       super(message);
       this.name = "NoResultsError";
-      this.code = errorCode;
+      this.statusCode = 404;
     }
   }
-
-  module.exports = NoResultsError
