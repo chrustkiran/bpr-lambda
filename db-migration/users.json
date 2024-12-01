@@ -1,6 +1,6 @@
 [
     {
-      "UserID": "1",
+      "CustomerID": "1",
       "PhoneNumber": "0468368240",
       "FirstName": "Chris",
       "LastName": "Morris",
@@ -10,7 +10,7 @@
       "AddressLine1": "111, 453, Ambal St"
     },
     {
-        "UserID": "12",
+        "CustomerID": "12",
         "PhoneNumber": "07678829e2",
         "FirstName": "Morris",
         "LastName": "Martin",

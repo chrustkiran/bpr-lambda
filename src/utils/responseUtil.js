@@ -5,4 +5,11 @@ const returnSuccessResponse = (res) => {
     }
 }
 
-module.exports = {returnSuccessResponse}
+const returnCreatedResponse = (res) => {
+    return {
+        statusCode: 201,
+        body: JSON.stringify(res)
+    }
+}
+
+module.exports = {returnSuccessResponse, returnCreatedResponse}

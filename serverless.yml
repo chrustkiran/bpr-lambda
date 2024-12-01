@@ -6,11 +6,8 @@ plugins:
   - serverless-offline
   - serverless-dynamodb-local
 
-
 custom:
-  accountId:
-    dev: '123456'
-    prod: '123' #'${aws:accountId}'
+  accountId: '123'   #here set ${aws:accountId} when deploying
   dynamodb:
     stages:
       - dev
@@ -22,7 +19,7 @@ custom:
     seed:
       dev:
         sources:
-          - table: CustomersTable_${sls:stage}
+          - table: CustomersTable_bpr_${sls:stage}
             sources: [db-migration/users.json]
     options:
       endpoint: http://localhost:8000
@@ -31,6 +28,7 @@ provider:
   name: aws
   runtime: nodejs20.x
   stage: dev
+  region: ap-southeast-2
   environment:
       STAGE: ${sls:stage}
   iamRoleStatements:
@@ -39,9 +37,34 @@ provider:
         - "dynamodb:PutItem"
         - "dynamodb:Get*"
         - "dynamodb:Scan*"
+        - "dynamodb:Query*"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-      Resource: arn:aws:dynamodb:${aws:region}:${self:custom.accountId.${sls:stage}}:table/*
+      Resource: arn:aws:dynamodb:${aws:region}:${self:custom.accountId}:table/*_bpr_${sls:stage}
+  httpApi:
+    # authorizers:
+    #   bprJwtAuthorizer:
+    #     type: jwt
+    #     identitySource: $request.header.Authorization
+    #     issuerUrl: https://cognito-idp.${aws:region}.amazonaws.com/12334
+    #     audience:
+    #       - 12345
+    #       - 12345
+    # cors:
+    #   allowedOrigins:
+    #     - '*'
+    #   allowedHeaders:
+    #     - Content-Type
+    #     - Authorization
+    #   allowedMethods:
+    #     - GET
+    #     - POST
+    #     - DELETE
+    #     - PATCH
+    #   allowCredentials: true
+    #   exposedResponseHeaders:
+    #     - Special-Response-Header
+    #   maxAge: 6000 # In seconds
 functions:
   searchCustomer:
     handler: src/controllers/customerController.searchCustomer
@@ -49,20 +72,40 @@ functions:
       - httpApi:
           path: /customer/search
           method: post
+          # authorizer:
+          #   name: bprJwtAuthorizer
   getAllCustomers:
     handler: src/controllers/customerController.getAllCustomers
     events: 
       - httpApi:
           path: /customers
           method: get
+          # authorizer:
+          #   name: bprJwtAuthorizer
+  createCustomers:
+    handler: src/controllers/customerController.createCustomers
+    events: 
+      - httpApi:
+          path: /customers
+          method: post
+          # authorizer:
+          #   name: bprJwtAuthorizer
+  getCustomerById:
+    handler: src/controllers/customerController.getCustomerByCustomerId
+    events: 
+      - httpApi:
+          path: /customer/{customerId}
+          method: get
+          # authorizer:
+          #   name: bprJwtAuthorizer
 resources:
   Resources:
      UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: CustomersTable_${sls:stage}
+        TableName: CustomersTable_bpr_${sls:stage}
         AttributeDefinitions:
-          - AttributeName: UserID
+          - AttributeName: CustomerID
             AttributeType: S
           - AttributeName: FirstName
             AttributeType: S
@@ -71,7 +114,7 @@ resources:
           - AttributeName: PhoneNumber
             AttributeType: S 
         KeySchema:
-          - AttributeName: UserID
+          - AttributeName: CustomerID
             KeyType: HASH
         GlobalSecondaryIndexes:
           - IndexName: FirstNameIndex
@@ -130,3 +173,4 @@ resources:
     #         Projection:
     #           ProjectionType: ALL
     #     BillingMode: PAYPERREQUEST  # Use on-demand billing
+    ##### API GATEWAY AUTHORIZER
