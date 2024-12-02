@@ -8,6 +8,11 @@ plugins:
 
 custom:
   accountId: '123'   #here set ${aws:accountId} when deploying
+  authorizer:
+    test:
+      name: bprJwtAuthorizer
+    prod:
+      name: bprJwtAuthorizer
   dynamodb:
     stages:
       - dev
@@ -42,29 +47,29 @@ provider:
         - "dynamodb:DeleteItem"
       Resource: arn:aws:dynamodb:${aws:region}:${self:custom.accountId}:table/*_bpr_${sls:stage}
   httpApi:
-    # authorizers:
-    #   bprJwtAuthorizer:
-    #     type: jwt
-    #     identitySource: $request.header.Authorization
-    #     issuerUrl: https://cognito-idp.${aws:region}.amazonaws.com/12334
-    #     audience:
-    #       - 12345
-    #       - 12345
-    # cors:
-    #   allowedOrigins:
-    #     - '*'
-    #   allowedHeaders:
-    #     - Content-Type
-    #     - Authorization
-    #   allowedMethods:
-    #     - GET
-    #     - POST
-    #     - DELETE
-    #     - PATCH
-    #   allowCredentials: true
-    #   exposedResponseHeaders:
-    #     - Special-Response-Header
-    #   maxAge: 6000 # In seconds
+    authorizers:
+      bprJwtAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: https://cognito-idp.${aws:region}.amazonaws.com/ap-southeast-2_rl44Okg3d
+        audience:
+          - 7k4cdppukqbvgrgb1jh48k534q
+          - k9pr9eh64r68ndppebgdbj136
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - DELETE
+        - PATCH
+      allowCredentials: true
+      exposedResponseHeaders:
+        - Special-Response-Header
+      maxAge: 6000 # In seconds
 functions:
   searchCustomer:
     handler: src/controllers/customerController.searchCustomer
@@ -72,32 +77,28 @@ functions:
       - httpApi:
           path: /customer/search
           method: post
-          # authorizer:
-          #   name: bprJwtAuthorizer
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
   getAllCustomers:
     handler: src/controllers/customerController.getAllCustomers
     events: 
       - httpApi:
           path: /customers
           method: get
-          # authorizer:
-          #   name: bprJwtAuthorizer
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
   createCustomers:
     handler: src/controllers/customerController.createCustomers
     events: 
       - httpApi:
           path: /customers
           method: post
-          # authorizer:
-          #   name: bprJwtAuthorizer
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
   getCustomerById:
     handler: src/controllers/customerController.getCustomerByCustomerId
     events: 
       - httpApi:
           path: /customer/{customerId}
           method: get
-          # authorizer:
-          #   name: bprJwtAuthorizer
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
 resources:
   Resources:
      UsersTable:

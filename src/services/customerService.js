@@ -29,7 +29,7 @@ const createCustomers = async (customers) => {
     const added = []
     for(const customer of customersModified) {
       try {
-        await customerRepo.addCustomers(customer)
+        await customerRepo.createOrUpdateCustomers(customer)
         added.push(customer)
       } catch (error) {
         errors.push({error: error, customer: customer})

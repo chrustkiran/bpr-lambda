@@ -34,7 +34,7 @@ const result = await dynamodb.query(params).promise();
 return result;
 }
 
-const addCustomers = async (customer) => {
+const createOrUpdateCustomers = async (customer) => {
   //moslty from prod we are going to insert only one item, so that I have used only put method in foreach.
   const params = {
     TableName: TableName,
@@ -43,4 +43,4 @@ const addCustomers = async (customer) => {
   await dynamodb.put(params).promise();
 }
 
-module.exports = {getAllCustomers, searchCustomer, getCustomerByCustomerId, addCustomers}
+module.exports = {getAllCustomers, searchCustomer, getCustomerByCustomerId, createOrUpdateCustomers}
