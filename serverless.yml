@@ -99,6 +99,13 @@ functions:
           path: /customer/{customerId}
           method: get
           authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  modifyCustomer:
+    handler: src/controllers/customerController.modifyCustomer
+    events: 
+      - httpApi:
+          path: /customer/{customerId}
+          method: put
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
 resources:
   Resources:
      UsersTable:
@@ -148,30 +155,25 @@ resources:
         ProvisionedThroughput:
               ReadCapacityUnits: 10
               WriteCapacityUnits: 5
-    #  VehiclesTable:
-    #   Type: AWS::DynamoDB::Table
-    #   Properties:
-    #     TableName: Vehicles
-    #     AttributeDefinitions:
-    #       - AttributeName: VehicleNumber
-    #         AttributeType: S
-    #       - AttributeName: UserID
-    #         AttributeType: S
-    #       - AttributeName: Model
-    #         AttributeType: S
-    #       - AttributeName: Make
-    #         AttributeType: S
-    #       - AttributeName: Year
-    #         AttributeType: N
-    #     KeySchema:
-    #       - AttributeName: VehicleNumber
-    #         KeyType: HASH
-    #     GlobalSecondaryIndexes:
-    #       - IndexName: UserIDIndex
-    #         KeySchema:
-    #           - AttributeName: UserID
-    #             KeyType: HASH
-    #         Projection:
-    #           ProjectionType: ALL
-    #     BillingMode: PAYPERREQUEST  # Use on-demand billing
-    ##### API GATEWAY AUTHORIZER
+     VehiclesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Vehicles_bpr_${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: VehicleID
+            AttributeType: S
+          - AttributeName: CustomerID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: VehicleID
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: CustomerIDIndex
+            KeySchema:
+              - AttributeName: CustomerID
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5

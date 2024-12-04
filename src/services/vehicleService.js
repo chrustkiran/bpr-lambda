@@ -45,6 +45,7 @@ const createCustomers = async (customers) => {
 }
 
 const modifyCustomer = async (customer) => {
+  // TODO:: here we need to check if the user modified the vehicles. if he did, we need to avoid it and should throw an error.
   await customerRepo.createOrUpdateCustomers(customer)
 }
 

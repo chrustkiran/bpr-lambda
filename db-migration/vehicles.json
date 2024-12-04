@@ -1,0 +1,65 @@
+[
+  {
+    "VehicleID": "123",
+    "VehicleNumber": "GFD3556",
+    "CustomerID": "1",
+    "Make": "Mazda",
+    "Model": "3",
+    "Year": 2008,
+    "Invoices": [
+      {
+        "InvoiceNumber": 123,
+        "Date": "2024-12-03",
+        "Total": 125.56
+      },
+      {
+        "InvoiceNumber": 124,
+        "Date": "2024-12-01",
+        "Total": 120.56
+      }
+    ],
+    "Quotations": [
+      {
+        "InvoiceNumber": 125,
+        "Date": "2024-12-03",
+        "Total": 125.56
+      },
+      {
+        "InvoiceNumber": 126,
+        "Date": "2024-12-01",
+        "Total": 120.56
+      }
+    ]
+  },
+  {
+    "VehicleNumber": "GF3356",
+    "CustomerID": "1",
+    "Make": "Honda",
+    "Model": "Civic",
+    "Year": 2008,
+    "Invoices": [
+      {
+        "InvoiceNumber": 112,
+        "Date": "2024-08-03",
+        "Total": 125.56
+      },
+      {
+        "InvoiceNumber": 113,
+        "Date": "2024-12-01",
+        "Total": 120.56
+      }
+    ],
+    "Quotations": [
+      {
+        "InvoiceNumber": 11,
+        "Date": "2024-12-03",
+        "Total": 125.56
+      },
+      {
+        "InvoiceNumber": 12,
+        "Date": "2024-12-01",
+        "Total": 120.56
+      }
+    ]
+  }
+]

@@ -20,6 +20,11 @@ const createCustomersRequestValidator = (body) => {
     }
 }
 
+const modifyCustomerRequestValidator = (body, customerId) => {
+    if (body.customerId != customerId) throw new BadRequestError("Customer Ids are not matched")
+    createCustomersRequestValidator(body)
+}
+
 const australianPhoneNumberValidator = (phoneNumber) => {
     if (!phoneNumber) return false;
     const regex = /^(\+61|0)[2-9]{1}[0-9]{8}$/;
@@ -30,4 +35,4 @@ const suburbValidator = (suburb) => {
     return typeof suburb === 'number' && !isNaN(suburb);
 }
 
-module.exports = {customerSearchRequestValidator, createCustomersRequestValidator}
+module.exports = {customerSearchRequestValidator, createCustomersRequestValidator, modifyCustomerRequestValidator}
