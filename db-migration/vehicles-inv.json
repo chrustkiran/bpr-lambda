@@ -1,0 +1,19 @@
+[
+    {
+      "VehicleID": "123",
+      "VehicleNumber": "GFD3556",
+      "CustomerID": "1",
+      "Make": "Mazda",
+      "Model": "3",
+      "Year": 2008
+    },
+    {
+      "VehicleID": "124",
+      "VehicleNumber": "GF3356",
+      "CustomerID": "1",
+      "Make": "Honda",
+      "Model": "Civic",
+      "Year": 2008
+    }
+  ]
+  

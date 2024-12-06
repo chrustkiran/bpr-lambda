@@ -9,29 +9,26 @@
     "Invoices": [
       {
         "InvoiceNumber": 123,
-        "Date": "2024-12-03",
-        "Total": 125.56
+        "Date": "2024-12-03"
       },
       {
         "InvoiceNumber": 124,
-        "Date": "2024-12-01",
-        "Total": 120.56
+        "Date": "2024-12-01"
       }
     ],
     "Quotations": [
       {
         "InvoiceNumber": 125,
-        "Date": "2024-12-03",
-        "Total": 125.56
+        "Date": "2024-12-03"
       },
       {
         "InvoiceNumber": 126,
-        "Date": "2024-12-01",
-        "Total": 120.56
+        "Date": "2024-12-01"
       }
     ]
   },
   {
+    "VehicleID": "124",
     "VehicleNumber": "GF3356",
     "CustomerID": "1",
     "Make": "Honda",

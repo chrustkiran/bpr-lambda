@@ -26,6 +26,8 @@ custom:
         sources:
           - table: CustomersTable_bpr_${sls:stage}
             sources: [db-migration/users.json]
+          - table: VehiclesTable_bpr_${sls:stage}
+            sources: [db-migration/vehicles.json]
     options:
       endpoint: http://localhost:8000
 
@@ -66,6 +68,7 @@ provider:
         - POST
         - DELETE
         - PATCH
+        - PUT
       allowCredentials: true
       exposedResponseHeaders:
         - Special-Response-Header
@@ -106,7 +109,7 @@ functions:
           path: /customer/{customerId}
           method: put
           authorizer: ${self:custom.authorizer.${sls:stage}, null}
-  ######################## VEHICLE ##########################3333
+  ######################## VEHICLE ##########################
   getAllVehicles:
     handler: src/controllers/vehicleController.getAllVehicles
     events:
@@ -194,7 +197,7 @@ resources:
      VehiclesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Vehicles_bpr_${sls:stage}
+        TableName: VehiclesTable_bpr_${sls:stage}
         AttributeDefinitions:
           - AttributeName: VehicleID
             AttributeType: S
@@ -207,6 +210,35 @@ resources:
           - IndexName: CustomerIDIndex
             KeySchema:
               - AttributeName: CustomerID
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+        ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
+     InvoiceTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: InvoicesTable_bpr_${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: InvoiceNumber
+            AttributeType: S
+          - AttributeName: Type
+            AttributeType: S
+          - AttributeName: VehicleID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: InvoiceNumber
+            KeyType: HASH
+          - AttributeName: Type
+            KeyType: SORT
+        GlobalSecondaryIndexes:
+          - IndexName: VehicleIDIndex
+            KeySchema:
+              - AttributeName: VehicleID
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
