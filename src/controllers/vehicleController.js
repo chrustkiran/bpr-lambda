@@ -1,78 +1,82 @@
-const customerService = require("../services/customerService");
+const vehicleService = require("../services/vehicleService");
 const { returnError } = require("../utils/exceptionHandler");
 const responseHandler = require("../utils/responseUtil");
 const requestValidator = require("../validators/requestValidator");
 
-const getAllCustomers = async (events) => {
+const getAllVehicles = async (events) => {
   try {
-    const result = await customerService.getAllCustomers(
-      events.queryStringParameters?.isSorting
+    const result = await vehicleService.getAllVehicles(
+      events.pathParameters?.customerId
     );
     return responseHandler.returnSuccessResponse(result);
   } catch (error) {
-    console.error("There was an error while getting all user records", error);
+    console.error("There was an error while getting all vehicle records", error);
     return returnError(error);
   }
 };
 
-const searchCustomer = async (events) => {
-  try {
-    const body = JSON.parse(events.body);
-    requestValidator.customerSearchRequestValidator(body);
-    const result = await customerService.searchCustomer(body.phoneNumber);
-    return responseHandler.returnSuccessResponse(result);
-  } catch (error) {
-    console.error("There was an error while searching customer ", error);
-    return returnError(error);
-  }
-};
 
-const createCustomers = async (events) => {
+const createVehicle = async (events) => {
   try {
+    const customerId = events.pathParameters.customerId;
     const body = JSON.parse(events.body);
-    requestValidator.createCustomersRequestValidator(body);
-    const result = await customerService.createCustomers(body.customers);
+    requestValidator.createVehilesRequestValidator(body, customerId);
+    const result = await vehicleService.createVehicle(body.vehicles);
     return responseHandler.returnCreatedResponse(result);
   } catch (error) {
-    console.error("There was an error while searching customer ", error);
+    console.error("There was an error while creating vehicle ", error);
     return returnError(error);
   }
 };
 
-const getCustomerByCustomerId = async (events) => {
-  const customerId = events.pathParameters?.customerId;
+const getVehicleDetails = async (events) => {
+  const vehicleId = events.pathParameters?.vehicleId;
   try {
-    const result = await customerService.getCustomerByCustomerId(customerId);
+    const result = await vehicleService.getVehicleDetails(vehicleId);
     return responseHandler.returnSuccessResponse(result);
   } catch (error) {
     console.error(
-      `There was an error while getting customer record for customer id ${customerId}`,
+      `There was an error while getting vehicle record for vechile id ${vehicleId}`,
       error
     );
     return returnError(error);
   }
 };
 
-const modifyCustomer = async (events) => {
-  const customerId = events.pathParameters?.customerId;
+const updateVehicle = async (events) => {
+  const vehicleId = events.pathParameters?.vehicleId;
   try {
     const body = JSON.parse(events.body);
-    requestValidator.modifyCustomerRequestValidator(body, customerId);
-    const result = await customerService.modifyCustomer(body);
-    return responseHandler.returnSuccessResponse(result);
+    requestValidator.modifyVehicleRequestValidator(body, customerId);
+    const result = await vehicleService.updateVehicle(body);
+    return responseHandler.returnAcceptedResponse(result);
   } catch (error) {
     console.error(
-      `There was an error while modifying customer record for customer id ${customerId}`,
+      `There was an error while modifying vehicle record for vehicle id ${vehicleId}`,
       error
     );
     return returnError(error);
   }
 };
 
+const removeVehicle = async (events) => {
+  try {
+    const vehicleId = events.pathParameters?.vehicleId;
+    await vehicleService.removeVehicle(vehicleId);
+    return responseHandler.returnAcceptedResponse();
+  } catch (error) {
+    console.error(
+      `There was an error while deleting vehicle record for vehicle id ${vehicleId}`,
+      error
+    );
+    return returnError(error);
+  }
+}
+
 module.exports = {
-  getAllCustomers,
-  searchCustomer,
-  createCustomers,
-  getCustomerByCustomerId,
-  modifyCustomer,
+  getAllVehicles,
+  createVehicle,
+  getVehicleDetails,
+  updateVehicle,
+  removeVehicle
 };

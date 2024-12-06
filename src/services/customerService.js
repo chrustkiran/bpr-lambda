@@ -45,6 +45,7 @@ const createCustomers = async (customers) => {
 }
 
 const modifyCustomer = async (customer) => {
+  //TODO :: throw an error if they try to update vehicle through this api.
   await customerRepo.createOrUpdateCustomers(customer)
 }
 

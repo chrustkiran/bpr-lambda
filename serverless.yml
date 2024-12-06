@@ -106,6 +106,42 @@ functions:
           path: /customer/{customerId}
           method: put
           authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  ######################## VEHICLE ##########################3333
+  getAllVehicles:
+    handler: src/controllers/vehicleController.getAllVehicles
+    events:
+      - httpApi:
+          path: /customers/{customerId}/vehicles
+          method: get
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  createVehicle:
+    handler: src/controllers/vehicleController.createVehicle
+    events: 
+      - httpApi:
+          path: /customers/{customerId}/vehicle
+          method: post
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  getVehicleDetails:
+    handler: src/controllers/vehicleController.getVehicleDetails
+    events: 
+      - httpApi:
+          path: /vehicles/{vehicleId}
+          method: get
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  updateVehicle:
+    handler: src/controllers/vehicleController.updateVehicle
+    events: 
+      - httpApi:
+          path: /vehicles/{vehicleId}
+          method: put
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
+  removeVehicle:
+    handler: src/controllers/vehicleController.removeVehicle
+    events: 
+      - httpApi:
+          path: /vehicles/{vehicleId}
+          method: delete
+          authorizer: ${self:custom.authorizer.${sls:stage}, null}
 resources:
   Resources:
      UsersTable:
@@ -174,6 +210,9 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 5
         ProvisionedThroughput:
               ReadCapacityUnits: 10
               WriteCapacityUnits: 5

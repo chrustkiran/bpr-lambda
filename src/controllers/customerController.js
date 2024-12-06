@@ -34,7 +34,7 @@ const createCustomers = async (events) => {
     const result = await customerService.createCustomers(body.customers);
     return responseHandler.returnCreatedResponse(result);
   } catch (error) {
-    console.error("There was an error while searching customer ", error);
+    console.error("There was an error while creating customer ", error);
     return returnError(error);
   }
 };
@@ -58,8 +58,8 @@ const modifyCustomer = async (events) => {
   try {
     const body = JSON.parse(events.body);
     requestValidator.modifyCustomerRequestValidator(body, customerId);
-    const result = await customerService.modifyCustomer(body);
-    return responseHandler.returnSuccessResponse(result);
+    await customerService.modifyCustomer(body);
+    return responseHandler.returnAcceptedResponse();
   } catch (error) {
     console.error(
       `There was an error while modifying customer record for customer id ${customerId}`,
